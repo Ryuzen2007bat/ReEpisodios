@@ -1,0 +1,662 @@
+/* Todo el color vive en estas variables: cambiar la "fachada" = cambiar esto.
+   Tema: Miasma de la Bruja de la Envidia + plateado de Emilia. */
+:root {
+  --bg: #07050a;              /* Oscuridad absoluta */
+  --panel: #130f1c;           /* Violeta noche profundo */
+  --borde: rgba(138, 43, 226, 0.35); /* Púrpura de barrera de maná */
+  --texto: #f5f3ff;           /* Blanco plateado */
+  --tenue: #a59bbb;           /* Gris morado */
+  --acento: #b072f5;          /* Miasma (más claro que #8a2be2 para que se lea sobre fondo oscuro) */
+  --acento-fuerte: #8a2be2;   /* Magia de sombra */
+  --acento2: #be123c;         /* Sangre del retorno */
+  --dorado: #fbbf24;          /* Emblema real / monedas de la capital */
+  --peligro: #f43f5e;
+  --degradado: linear-gradient(135deg, #4c1d95 0%, #881337 100%); /* Miasma → sangre */
+  --resplandor: rgba(138, 43, 226, 0.4);
+  --oro-apagado: rgba(212, 175, 95, 0.28);   /* filetes dorados de la tapa del libro */
+  --fuente-tomo: Cinzel, Georgia, "Times New Roman", serif;
+  /* Rombo dorado para las esquinas de las tarjetas */
+  --rombo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0L10 5L5 10L0 5Z' fill='%23c9a75a' fill-opacity='.75'/%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { background: #000; }
+
+body {
+  /* Morado casi negro en el centro, negro puro en los bordes */
+  background: radial-gradient(ellipse at 50% 40%, #1a0f2b 0%, #0c0714 45%, #000 100%) fixed;
+  color: var(--texto);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  line-height: 1.4;
+  min-height: 100dvh;
+}
+
+#ceniza {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+}
+
+/* Tipografía de tomo antiguo para los títulos; Inter para el texto largo */
+h1, h2 {
+  font-family: var(--fuente-tomo);
+  letter-spacing: 0.6px;
+  font-weight: 700;
+}
+h1 { font-size: 1.45rem; line-height: 1.25; margin-bottom: 14px; }
+h2 { font-size: 1.05rem; }
+
+/* Tarjetas = tapas de un libro mágico: marco interior dorado + rombos en las esquinas */
+section, .hero {
+  position: relative;
+  background: linear-gradient(160deg, #17112a 0%, var(--panel) 55%, #0f0b17 100%);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 20px 18px;
+  box-shadow: 0 0 24px rgba(76, 29, 149, 0.15), inset 0 0 30px rgba(0, 0, 0, 0.35);
+}
+section::before, .hero::before {
+  content: "";
+  position: absolute; inset: 6px;
+  border: 1px solid var(--oro-apagado);
+  border-radius: 8px;
+  pointer-events: none;
+}
+section::after, .hero::after {
+  content: "";
+  position: absolute; inset: 2px;
+  background:
+    var(--rombo) left top / 9px 9px no-repeat,
+    var(--rombo) right top / 9px 9px no-repeat,
+    var(--rombo) left bottom / 9px 9px no-repeat,
+    var(--rombo) right bottom / 9px 9px no-repeat;
+  pointer-events: none;
+}
+
+/* Divisor fino con rombo debajo de los títulos de sección */
+.resumen h2, .arcos h2 {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 4px;
+}
+.resumen h2::before, .arcos h2::before {
+  content: "◆"; color: #c9a75a; font-size: 0.6rem; opacity: 0.8;
+}
+.resumen h2::after, .arcos h2::after {
+  content: ""; flex: 1; height: 1px;
+  background: linear-gradient(to right, var(--oro-apagado), transparent);
+}
+
+.fecha-label { color: var(--tenue); font-size: 0.85rem; margin-bottom: 4px; }
+.fecha-label::first-letter, .cal-nav h2::first-letter { text-transform: uppercase; }
+
+/* Mensaje en fechas especiales (cumpleaños del amigo, Subaru, Rem y Ram, Emilia) */
+.fecha-especial {
+  margin: -6px 0 14px;
+  padding: 8px 12px;
+  border-left: 3px solid var(--dorado);
+  background: rgba(251, 191, 36, 0.07);
+  color: var(--dorado);
+  font-size: 0.9rem;
+  border-radius: 0 8px 8px 0;
+}
+.fecha-especial[hidden] { display: none; }
+
+/* ---------- Formulario ---------- */
+form { display: grid; gap: 12px; }
+
+input[type="text"], textarea, select {
+  width: 100%;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  font: inherit;
+}
+input::placeholder, textarea::placeholder { color: #6f6585; }
+input[type="text"]:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--acento-fuerte);
+  outline-offset: 1px;
+  box-shadow: 0 0 12px var(--resplandor);
+}
+textarea { resize: vertical; margin: 10px 0; }
+select option { background: var(--panel); }
+
+summary { cursor: pointer; color: var(--tenue); padding: 4px 0; }
+summary:hover { color: var(--acento); }
+
+.fila { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.fila select { flex: 1; min-width: 150px; }
+
+button, .boton-label {
+  padding: 11px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--borde);
+  background: var(--degradado);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: filter 0.15s, box-shadow 0.15s;
+}
+button.secundario, .boton-label.secundario {
+  background: transparent;
+  color: var(--texto);
+  font-weight: 500;
+}
+button.peligro {
+  background: transparent;
+  color: var(--peligro);
+  border-color: var(--peligro);
+  font-weight: 500;
+}
+button:hover, .boton-label:hover { filter: brightness(1.2); box-shadow: 0 0 10px var(--resplandor); }
+/* "Quemar página": brasa rojiza al pasar el cursor */
+button.peligro:hover {
+  background: rgba(244, 63, 94, 0.08);
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.55), inset 0 -6px 12px rgba(251, 146, 60, 0.18);
+  text-shadow: 0 0 8px rgba(251, 146, 60, 0.7);
+}
+
+/* Confirmaciones en ámbar, a juego con los filetes dorados */
+#mensaje {
+  min-height: 1.2em;
+  white-space: pre-line;   /* permite una segunda línea con un susurro */
+  color: var(--dorado);
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.35);
+  font-size: 0.9rem;
+}
+
+/* ---------- Resumen ---------- */
+.resumen p { margin-top: 6px; color: var(--tenue); }
+.resumen strong { color: var(--texto); }
+
+/* ---------- Calendario ---------- */
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+
+.cal-nav button { padding: 6px 14px; font-size: 1.1rem; }
+
+.cal-semana, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-semana { margin-bottom: 6px; text-align: center; color: var(--tenue); font-size: 0.8rem; }
+
+.cal-grid .vacia { visibility: hidden; }
+
+.dia {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 52px;
+  padding: 6px;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--texto);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: 400;
+}
+.dia:disabled { opacity: 0.3; cursor: default; }
+.dia:disabled:hover { filter: none; box-shadow: none; }
+.dia .num { font-size: 0.8rem; color: var(--tenue); }
+.dia .tit { font-size: 0.78rem; overflow: hidden; text-overflow: ellipsis; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.dia.con-episodio { border-color: var(--borde); background: rgba(138, 43, 226, 0.10); }
+.dia.con-episodio .num { color: var(--acento); font-weight: 700; }
+.dia.hoy { outline: 2px solid var(--acento2); }
+.dia.seleccionado {
+  border: 2px solid var(--acento-fuerte);
+  box-shadow: 0 0 12px var(--resplandor);
+}
+.dia.especial .num { color: var(--dorado); }
+
+/* En celular: solo un puntito, sin título (no cabe) */
+.dia .tit { display: none; }
+.dia.con-episodio::after { content: "●"; color: var(--acento); font-size: 0.6rem; }
+
+/* ---------- Arcos ---------- */
+.arcos details { border-top: 1px solid var(--borde); padding: 8px 0; }
+.arcos details:first-of-type { margin-top: 10px; }
+.arcos ul { list-style: none; margin-top: 8px; display: grid; gap: 6px; }
+.arcos li button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--texto);
+  border: 1px solid transparent;
+  font-weight: 400;
+  padding: 6px 8px;
+}
+.arcos li button:hover { border-color: var(--borde); }
+.vacio-msg { color: var(--tenue); font-size: 0.9rem; margin-top: 8px; }
+
+/* ---------- Colores de las rutas ---------- */
+.punto-ruta {
+  display: inline-block;
+  width: 9px; height: 9px;
+  margin: 0 7px 1px 2px;
+  border-radius: 50%;
+  background: var(--ruta);
+  box-shadow: 0 0 6px var(--ruta);
+  vertical-align: middle;
+}
+
+/* Día que pertenece a una ruta: tinte, franja lateral y número del color de la ruta */
+.dia.con-ruta {
+  border-color: color-mix(in srgb, var(--ruta) 45%, transparent);
+  background: color-mix(in srgb, var(--ruta) 11%, rgba(0, 0, 0, 0.35));
+  box-shadow: inset 3px 0 0 var(--ruta);
+}
+.dia.con-ruta .num { color: var(--ruta); }
+.dia.con-ruta.con-episodio::after { color: var(--ruta); }
+.dia.con-ruta.seleccionado {
+  border-color: var(--acento-fuerte);
+  box-shadow: inset 3px 0 0 var(--ruta), 0 0 12px var(--resplandor);
+}
+
+.ruta-acciones {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(212, 175, 95, 0.18);
+}
+.ruta-colores { display: flex; gap: 6px; width: 100%; }
+button.muestra {
+  width: 22px; height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: var(--ruta);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5) inset;
+}
+button.muestra[aria-pressed="true"] {
+  border-color: var(--texto);
+  box-shadow: 0 0 10px var(--ruta);
+}
+button.chico { padding: 6px 12px; font-size: 0.85rem; }
+
+/* ---------- Respaldo ---------- */
+.respaldo { display: flex; gap: 10px; flex-wrap: wrap; }
+.boton-label { display: inline-block; }
+
+/* ---------- Barra de la nube ---------- */
+.barra-nube {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: var(--tenue);
+}
+.barra-nube[hidden] { display: none; }
+/* Páginas sin subir o mucho tiempo sin respaldo: ámbar que respira */
+.barra-nube.alerta {
+  border-color: rgba(251, 191, 36, 0.55);
+  color: var(--dorado);
+  animation: respirar 2.8s ease-in-out infinite;
+}
+@keyframes respirar {
+  0%, 100% { box-shadow: 0 0 0 rgba(251, 191, 36, 0); }
+  50% { box-shadow: 0 0 16px rgba(251, 191, 36, 0.3); }
+}
+
+/* =====================================================
+   PORTADA: la tapa del Libro en la Biblioteca de Taygeta
+   ===================================================== */
+body.con-portada { overflow: hidden; }
+body.con-portada .app, body.con-portada .aroma { visibility: hidden; }
+
+.portada {
+  position: fixed; inset: 0; z-index: 800;
+  display: grid; place-items: center;
+  padding: 24px 16px;
+  overflow-y: auto;
+  perspective: 1600px;
+}
+.portada[hidden] { display: none; }
+
+.libro {
+  position: relative;
+  width: min(400px, 100%);
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 1.1s cubic-bezier(0.6, 0, 0.3, 1), opacity 1.1s ease;
+  animation: aparecer-libro 1s ease;
+}
+.portada.abriendo .libro {
+  transform: rotateY(-115deg);
+  opacity: 0;
+}
+
+.libro-tapa {
+  position: relative;
+  min-height: 560px;
+  padding: 44px 34px 34px 44px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  border-radius: 6px 14px 14px 6px;
+  /* Cuero violeta oscuro con lomo a la izquierda */
+  background:
+    radial-gradient(ellipse at 60% 35%, rgba(138, 43, 226, 0.22), transparent 60%),
+    linear-gradient(90deg, #0b0511 0px, #1d0f2e 16px, #241339 22px, #1a0d29 60%, #12091d 100%);
+  box-shadow:
+    inset 10px 0 18px rgba(0, 0, 0, 0.65),
+    inset -2px 0 0 rgba(255, 255, 255, 0.04),
+    0 30px 60px rgba(0, 0, 0, 0.7),
+    0 0 50px rgba(76, 29, 149, 0.35);
+}
+/* Doble filete dorado */
+.libro-tapa::before, .libro-tapa::after {
+  content: "";
+  position: absolute;
+  border-radius: 4px;
+  pointer-events: none;
+}
+.libro-tapa::before { inset: 14px 14px 14px 26px; border: 1px solid rgba(212, 175, 95, 0.55); }
+.libro-tapa::after  { inset: 20px 20px 20px 32px; border: 1px solid rgba(212, 175, 95, 0.25); }
+
+.libro-esquina {
+  position: absolute;
+  width: 13px; height: 13px;
+  background: var(--rombo) center / contain no-repeat;
+}
+.sup-izq { top: 8px; left: 20px; }
+.sup-der { top: 8px; right: 8px; }
+.inf-izq { bottom: 8px; left: 20px; }
+.inf-der { bottom: 8px; right: 8px; }
+
+.libro-sobre {
+  font-family: var(--fuente-tomo);
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(212, 175, 95, 0.75);
+  margin-bottom: 22px;
+}
+.libro-emblema {
+  width: 92px; height: 92px;
+  color: #c9a75a;
+  margin-bottom: 22px;
+  filter: drop-shadow(0 0 8px rgba(201, 167, 90, 0.35));
+}
+.emblema-centro { fill: #8a2be2; animation: palpitar 3.2s ease-in-out infinite; transition: fill 0.6s; }
+.libro-emblema { cursor: pointer; transition: filter 0.6s, transform 0.6s; }
+/* Las siete Brujas reunidas: el emblema se oscurece y late con miasma */
+.libro-emblema.reunidas {
+  filter: drop-shadow(0 0 18px rgba(138, 43, 226, 0.95));
+  transform: scale(1.08);
+}
+.libro-emblema.reunidas .emblema-centro { fill: #120018; }
+
+.libro-titulo {
+  font-family: var(--fuente-tomo);
+  font-size: 2.3rem;
+  margin: 0;
+  letter-spacing: 2px;
+  /* Letras con dorado envejecido */
+  background: linear-gradient(180deg, #f3e3b0 0%, #c9a75a 55%, #8f7136 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.6));
+}
+.libro-nombre {
+  font-family: var(--fuente-tomo);
+  font-size: 1.35rem;
+  color: #e9d9a6;
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+.libro-nombre[hidden] { display: none; }
+.libro-lema {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  color: var(--tenue);
+  font-size: 0.95rem;
+  margin: 16px 0 28px;
+}
+
+.libro-acciones { display: grid; gap: 10px; width: 100%; }
+.libro-acciones button[hidden] { display: none; }
+.libro-acciones button:disabled { opacity: 0.6; cursor: wait; filter: none; box-shadow: none; }
+.libro-nota { font-size: 0.78rem; color: var(--tenue); line-height: 1.35; }
+.libro-nota[hidden] { display: none; }
+.libro-estado { min-height: 1.2em; font-size: 0.85rem; color: var(--dorado); }
+
+button.enlace {
+  background: none;
+  border: none;
+  padding: 4px;
+  color: var(--tenue);
+  font-weight: 400;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+button.enlace:hover { color: var(--texto); box-shadow: none; }
+
+@keyframes aparecer-libro {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-width: 420px) {
+  .libro-tapa { min-height: 520px; padding: 40px 26px 30px 38px; }
+  .libro-titulo { font-size: 2rem; }
+}
+
+/* =====================================================
+   DEDICATORIA (se muestra una sola vez)
+   ===================================================== */
+.dedicatoria {
+  position: fixed; inset: 0; z-index: 900;
+  display: grid; place-items: center;
+  padding: 20px;
+  background: rgba(7, 5, 10, 0.88);
+  animation: aparecer 0.6s ease;
+}
+.dedicatoria-caja {
+  max-width: 460px;
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(138, 43, 226, 0.3);
+}
+.dedicatoria-caja h2 { font-family: var(--fuente-tomo); font-size: 1.5rem; margin-bottom: 14px; color: var(--texto); }
+
+/* =====================================================
+   AROMA DE LA BRUJA
+   --nivel va de 0 a 1 y lo pone app.js
+   ===================================================== */
+.aroma {
+  --nivel: 0.15;
+  position: fixed; top: 14px; right: 14px; z-index: 50;
+  width: 34px; height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(138, 43, 226, calc(0.2 + var(--nivel) * 0.6));
+  background: rgba(7, 5, 10, 0.7);
+  display: grid; place-items: center;
+  overflow: visible;
+}
+.aroma[hidden] { display: none; }
+@media (max-width: 899px) { .aroma { top: auto; bottom: 16px; right: 16px; } }
+.aroma:hover { filter: none; }
+.aroma-nucleo {
+  width: calc(8px + var(--nivel) * 12px);
+  height: calc(8px + var(--nivel) * 12px);
+  border-radius: 50%;
+  background: radial-gradient(circle, #d8b4fe 0%, #8a2be2 45%, transparent 75%);
+  box-shadow: 0 0 calc(6px + var(--nivel) * 26px) rgba(138, 43, 226, calc(0.4 + var(--nivel) * 0.6));
+  animation: palpitar 3s ease-in-out infinite;
+}
+.aroma-humo {
+  position: absolute; left: 50%; bottom: 50%;
+  width: 10px; height: 10px; margin-left: -5px;
+  border-radius: 50%;
+  background: rgba(138, 43, 226, calc(0.15 + var(--nivel) * 0.5));
+  filter: blur(4px);
+  animation: humear 3.2s ease-out infinite;
+  opacity: 0;
+  pointer-events: none;
+}
+.aroma-humo:nth-child(3) { animation-delay: 1.6s; }
+.aroma.recien { animation: destello 1.2s ease; }
+
+@keyframes palpitar { 0%, 100% { opacity: 0.75; } 50% { opacity: 1; } }
+@keyframes humear {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.6); }
+  25%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-6px, calc(-18px - var(--nivel) * 22px)) scale(calc(1.2 + var(--nivel) * 1.6)); }
+}
+@keyframes destello {
+  0%   { box-shadow: 0 0 0 rgba(138, 43, 226, 0); }
+  40%  { box-shadow: 0 0 40px 12px rgba(138, 43, 226, 0.7); }
+  100% { box-shadow: 0 0 0 rgba(138, 43, 226, 0); }
+}
+.dedicatoria-caja p { color: var(--tenue); margin-bottom: 20px; white-space: pre-line; }
+
+/* =====================================================
+   EL TABÚ: el tiempo se detiene y la Bruja susurra
+   ===================================================== */
+body.tiempo-detenido .app {
+  filter: grayscale(1) brightness(0.35);
+  transition: filter 0.4s;
+  pointer-events: none;
+}
+
+.tabu {
+  position: fixed; inset: 0; z-index: 1000;
+  overflow: hidden;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at center, rgba(40, 0, 55, 0.6) 0%, rgba(4, 0, 8, 0.98) 60%);
+  animation: aparecer 0.5s ease forwards;
+  cursor: default;
+}
+.tabu.saliendo { animation: desaparecer 0.8s ease forwards; }
+
+/* Las "manos" de sombra que se arrastran desde los bordes hacia el centro */
+.brazo {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 70vmax; height: 12vmax;
+  margin-top: -6vmax;
+  transform-origin: 0% 50%;
+  transform: rotate(var(--ang));
+  pointer-events: none;
+}
+.sombra {
+  width: 100%; height: 100%;
+  background: linear-gradient(to left, #000 0%, #030006 75%, rgba(45, 0, 70, 0.85) 93%, transparent 100%);
+  box-shadow: 0 0 40px rgba(138, 43, 226, 0.25);
+  border-radius: 50% 0 0 50% / 50% 0 0 50%;
+  filter: blur(5px);
+  transform-origin: 100% 50%;   /* crece desde el borde de la pantalla hacia el centro */
+  transform: scaleX(0);
+  animation: arrastrar 2.6s cubic-bezier(0.5, 0, 0.3, 1) forwards;
+}
+
+.corazon {
+  position: relative; z-index: 2;
+  font-size: clamp(4rem, 14vw, 8rem);
+  line-height: 1;
+  color: var(--acento2);
+  text-shadow: 0 0 30px rgba(190, 18, 60, 0.8);
+  animation: latido 1.1s ease-in-out infinite;
+}
+.tabu.apretando .corazon { animation: apretar 1.1s ease-in-out infinite; }
+
+.susurro {
+  position: absolute; z-index: 1;
+  font-family: Georgia, "Times New Roman", serif;
+  color: rgba(214, 180, 255, 0.85);
+  text-shadow: 0 0 12px rgba(138, 43, 226, 0.9);
+  white-space: nowrap;
+  opacity: 0;
+  animation: susurrar 2.4s ease-in-out forwards;
+  pointer-events: none;
+}
+
+.tabu-texto {
+  position: absolute; bottom: 12%; left: 0; right: 0; z-index: 3;
+  text-align: center;
+  font-family: var(--fuente-tomo);
+  font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+  color: #e9d5ff;
+  letter-spacing: 2px;
+  opacity: 0;
+  animation: aparecer 1.2s ease 1.6s forwards;
+}
+
+@keyframes aparecer   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes desaparecer { from { opacity: 1; } to { opacity: 0; } }
+@keyframes latido {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.18); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.12); }
+}
+@keyframes apretar {
+  0%, 100% { transform: scale(0.9, 0.95); filter: brightness(0.8); }
+  20% { transform: scale(0.72, 0.85); filter: brightness(0.5); }
+  50% { transform: scale(0.95, 1); filter: brightness(1); }
+}
+@keyframes arrastrar {
+  0%   { transform: scaleX(0); }
+  100% { transform: scaleX(0.82); }
+}
+@keyframes susurrar {
+  0%   { opacity: 0; transform: translateY(6px) scale(0.95); }
+  35%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-14px) scale(1.05); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabu, .sombra, .corazon, .susurro, .tabu-texto, .dedicatoria { animation-duration: 0.01s !important; animation-iteration-count: 1 !important; }
+  .sombra { transform: scaleX(0.82); }
+  .susurro { opacity: 0.8; }
+  .aroma-nucleo, .aroma-humo, .aroma.recien, .barra-nube.alerta, .emblema-centro, .libro { animation: none; }
+  .libro { transition: none; }
+}
+
+/* ---------- Pantalla grande ---------- */
+@media (min-width: 900px) {
+  .app {
+    grid-template-columns: 380px 1fr;
+    grid-template-areas:
+      "nube nube"
+      "hero cal"
+      "resumen cal"
+      "arcos cal"
+      "foot foot";
+    align-items: start;
+  }
+  .barra-nube { grid-area: nube; }
+  .hero { grid-area: hero; }
+  .resumen { grid-area: resumen; }
+  .calendario { grid-area: cal; }
+  .arcos { grid-area: arcos; }
+  .respaldo { grid-area: foot; }
+
+  h1 { font-size: 1.65rem; }
+  .dia { min-height: 96px; }
+  .dia .tit { display: -webkit-box; }
+  .dia.con-episodio::after { content: none; }
+}

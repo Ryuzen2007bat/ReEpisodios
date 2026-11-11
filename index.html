@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Re:Episodios — El Libro de tu vida</title>
+  <meta name="description" content="Un libro que no debería existir. Cada día, un título.">
+  <meta name="theme-color" content="#07050a">
+  <meta property="og:title" content="Re:Episodios — El Libro de tu vida">
+  <meta property="og:description" content="Un libro que no debería existir. Cada día, un título.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2307050a'/%3E%3Cpath d='M16 3L29 16L16 29L3 16Z' fill='none' stroke='%23c9a75a' stroke-width='2'/%3E%3Cpath d='M16 10L22 16L16 22L10 16Z' fill='%238a2be2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="con-portada">
+  <!-- Portada que aparece cada que sse abre el libro o se entra a la pag -->
+  <div class="portada" id="portada" role="dialog" aria-modal="true" aria-labelledby="portada-titulo">
+    <div class="libro">
+      <div class="libro-tapa">
+        <span class="libro-esquina sup-izq"></span><span class="libro-esquina sup-der"></span>
+        <span class="libro-esquina inf-izq"></span><span class="libro-esquina inf-der"></span>
+
+        <p class="libro-sobre">Biblioteca de Taygeta</p>
+        <svg class="libro-emblema" viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M50 4 L96 50 L50 96 L4 50 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M50 18 L82 50 L50 82 L18 50 Z" fill="none" stroke="currentColor" stroke-width="1"/>
+          <path d="M50 34 L66 50 L50 66 L34 50 Z" class="emblema-centro"/>
+          <circle cx="50" cy="4" r="2.5" fill="currentColor"/><circle cx="96" cy="50" r="2.5" fill="currentColor"/>
+          <circle cx="50" cy="96" r="2.5" fill="currentColor"/><circle cx="4" cy="50" r="2.5" fill="currentColor"/>
+        </svg>
+        <h1 class="libro-titulo" id="portada-titulo">El Libro</h1>
+        <p class="libro-nombre" id="portada-nombre" hidden></p>
+        <p class="libro-lema">«Un libro que no debería existir»</p>
+
+        <div class="libro-acciones">
+          <button type="button" id="btn-abrir-google" disabled>Preparando la Biblioteca…</button>
+          <p class="libro-nota" id="portada-nota">Tus páginas se guardan en tu propio Google Drive, en una carpeta oculta que solo esta página puede leer.</p>
+          <button type="button" id="btn-abrir-local" class="enlace">Leer sin conectar (solo en este navegador)</button>
+          <p class="libro-estado" id="portada-estado" role="status"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ceniza flotando en el fondo de páginas quemadas antes de que llegara el usuario...jajaja -->
+  <canvas id="ceniza" aria-hidden="true"></canvas>
+
+  <!-- Aroma de la Bruja: aparece y se intensifica cada vez que el usuario quiere rendirse o contar acerca de la existencia de su habilidad -->
+  <button type="button" class="aroma" id="aroma" hidden aria-label="Aroma de la Bruja">
+    <span class="aroma-nucleo"></span>
+    <span class="aroma-humo"></span>
+    <span class="aroma-humo"></span>
+  </button>
+
+  <main class="app">
+
+    <!-- 0) Barra de la nube (solo aparece si se configura GOOGLE_CLIENT_ID en app.js) -->
+    <div class="barra-nube" id="barra-nube" hidden>
+      <span id="estado-nube" role="status"></span>
+      <button type="button" id="btn-nube" class="secundario" disabled>Conectar con Google</button>
+    </div>
+
+    <!-- 1) Formulario principal: el día de hoy (o el día que se haga clic) -->
+    <header class="hero">
+      <p class="fecha-label" id="fecha-label"></p>
+      <h1 id="pregunta">¿Cuál es el título de este ciclo?</h1>
+      <p class="fecha-especial" id="fecha-especial" hidden></p>
+
+      <form id="form-episodio" autocomplete="off">
+        <input type="text" id="titulo" maxlength="80" placeholder="Título del episodio" required>
+
+        <details id="detalles">
+          <summary>Añadir memorias y asignar ruta</summary>
+          <textarea id="porque" rows="3" maxlength="500" placeholder="¿Qué memoria guarda este día? (opcional)"></textarea>
+          <div class="fila">
+            <select id="arco" aria-label="Arco">
+              <option value="">Sin ruta</option>
+            </select>
+            <button type="button" id="btn-nuevo-arco" class="secundario">+ Nueva ruta</button>
+          </div>
+        </details>
+
+        <div class="fila">
+          <button type="submit" id="btn-guardar">Fijar punto de retorno</button>
+          <button type="button" id="btn-borrar" class="peligro" hidden>Quemar página</button>
+        </div>
+        <p id="mensaje" role="status"></p>
+      </form>
+    </header>
+
+    <!-- 2) Resumen del mes y la ruta actual -->
+    <section class="resumen" id="resumen"></section>
+
+    <!-- 3) Calendario del mes -->
+    <section class="calendario">
+      <div class="cal-nav">
+        <button type="button" id="mes-prev" class="secundario" aria-label="Mes anterior">‹</button>
+        <h2 id="mes-titulo"></h2>
+        <button type="button" id="mes-next" class="secundario" aria-label="Mes siguiente">›</button>
+      </div>
+      <div class="cal-semana">
+        <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </section>
+
+    <!-- 4) Arcos -->
+    <section class="arcos">
+      <h2>Rutas de tu historia</h2>
+      <div id="lista-arcos"></div>
+    </section>
+
+    <!-- 5) Respaldo manual (sirve aunque no haya nube) -->
+    <footer class="respaldo">
+      <button type="button" id="btn-exportar" class="secundario">Exportar respaldo</button>
+      <label class="boton-label secundario">
+        Importar respaldo
+        <input type="file" id="archivo-importar" accept=".json" hidden>
+      </label>
+    </footer>
+
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
